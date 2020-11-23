@@ -4,34 +4,27 @@
 #include "memory_map.h"
 
 
-struct bcm2711_peripheral gpio = {GPIO_BASE};
+//struct bcm2711_peripheral gpio = {GPIO_BASE};
 unsigned char is_initialized = 0;
 
 
-//must be called before anything else in the file
-int gpio_init()
+//Constuctor
+IOPins::IOPins()
 {
-	if(is_initialized)
-	{
-		printf("gpio is already initialized. Could not initialize again");
-		return -1;
-	}
+	gpio.addr_p = GPIO_BASE;
 	if(map_peripheral(&gpio) == -1) 
 	  {
 		printf("Failed to map the physical GPIO registers into the virtual memory space.\n");
-		return -1;
+		throw;
 	  }
-	  is_initialized=1;
-	  return 1;
+}
+IOPins::~IOPins()
+{
+	unmap_peripheral(&gpio);
 }
 
-void func_sel(unsigned int pin,unsigned int funcode)//input function code is zero output is 1
+void IOPins::func_sel(unsigned int pin,unsigned int funcode)//input function code is zero output is 1
 {
-		if(!is_initialized)
-	{
-		printf("Failed to set funciton pin. gpio is not initialized");
-		return;
-	}
 	
 	if(funcode>7)
 	{
@@ -51,15 +44,10 @@ void func_sel(unsigned int pin,unsigned int funcode)//input function code is zer
 	//printf("GPFSEL2 is %X \n",GPFSEL0);
 }
 
+/*Deprecated use func_sel
 
-
-void pin_dir(unsigned int pin, unsigned char dir)//sets the pin direction to either input or output
+void IOPins::pin_dir(unsigned int pin, unsigned char dir)//sets the pin direction to either input or output
 {
-	if(!is_initialized)
-	{
-		printf("Failed to set pin direction. gpio is not initialized");
-		return;
-	}
 	if(dir==DIR_INPUT)
 	{
 		INP_GPIO(pin);
@@ -72,26 +60,16 @@ void pin_dir(unsigned int pin, unsigned char dir)//sets the pin direction to eit
 	{
 		printf("Invalid input into pin_dir");
 	}
+}*/
+
+void  IOPins::pin_set(unsigned int pinnum)
+{
+	GPSET0 = 1 << pinnum;
 }
 
-void  pin_set(unsigned int pinnum)
+void IOPins::pin_clear(unsigned int pinnum)
 {
-	if(!is_initialized)
-	{
-		printf("Failed to set pin. gpio is not initialized");
-		return;
-	}
-	GPSET0 = 1 << 4;
-}
-
-void pin_clear(unsigned int pinnum)
-{
-	if(!is_initialized)
-	{
-		printf("Failed to clear pin. gpio not initialized");
-		return;
-	}
-	GPCLR0 = 1 << 4;
+	GPCLR0 = 1 << pinnum;
 }
 
 

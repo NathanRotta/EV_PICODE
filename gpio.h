@@ -6,21 +6,25 @@
 #include "memory_map.h"
 
 
-extern struct bcm2711_peripheral gpio;
+
 
 #define GPIO_BASE               (0x200000+BCM2711_PERI_BASE)// GPIO controlller 
 #define DIR_INPUT 0
 #define DIR_OUTPUT 1
 
+class IOPins{
+	//function prototypes
+	public:
+	void pin_clear(unsigned int pinnum);
+	void  pin_set(unsigned int pinnum);
+	//void pin_dir(unsigned int pin, unsigned char dir);
+	IOPins();
+	~IOPins();
+	void func_sel(unsigned int pin,unsigned int funcode);
+	private:
+	struct bcm2711_peripheral gpio;
 
-//function prototypes
-void pin_clear(unsigned int pinnum);
-void  pin_set(unsigned int pinnum);
-void pin_dir(unsigned int pin, unsigned char dir);
-int gpio_init();
-void func_sel(unsigned int pin,unsigned int funcode);
-
-
+};
 
 /*
 Directly copied from GPIO section of https://www.raspberrypi.org/documentation/hardware/raspberrypi/bcm2711/rpi_DATA_2711_1p0.pdf
@@ -111,7 +115,7 @@ we are addressing by the 32 bit word length but the addresses in the datasheet a
 
 
 
-#define INP_GPIO(g)   *(gpio.addr + ((g)/10)) &= ~(7<<(((g)%10)*3))
+#define INP_GPIO(g)   *(gpio.addr + ((g)/10)) &= ~(7<<(((g)%10)*3))//deprecated use func_sel
 #define OUT_GPIO(g)   *(gpio.addr + ((g)/10)) |=  (1<<(((g)%10)*3))
 #define SET_GPIO_ALT(g,a) *(gpio.addr + (((g)/10))) |= (((a)<=3?(a) + 4:(a)==4?3:2)<<(((g)%10)*3))
 

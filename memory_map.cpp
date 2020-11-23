@@ -27,7 +27,7 @@ int map_peripheral(struct bcm2711_peripheral *p)
  
    return 0;
 }
-
+ 
 void unmap_peripheral(struct bcm2711_peripheral *p) {
  
     munmap(p->map, BLOCK_SIZE);
