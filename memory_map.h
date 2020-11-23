@@ -33,7 +33,6 @@ struct bcm2711_peripheral {
 
 
 //function prototypes
-void *phys_mem(void *virt);
 
 int map_peripheral(struct bcm2711_peripheral *p);
 
