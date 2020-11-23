@@ -23,13 +23,17 @@ This is a different offset than one would think fromt the datasheet but there is
  
 #define BLOCK_SIZE 		(4*1024)
  
-// IO Acces
+// Struct used for mapping memory
 struct bcm2711_peripheral {
     unsigned long addr_p;
     int mem_fd;
     void *map;
     volatile unsigned int *addr;
 };
+
+
+//function prototypes
+void *phys_mem(void *virt);
 
 int map_peripheral(struct bcm2711_peripheral *p);
 

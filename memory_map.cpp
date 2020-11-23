@@ -27,6 +27,18 @@ int map_peripheral(struct bcm2711_peripheral *p)
  
    return 0;
 }
+// Return physical address of virtual memory
+void *phys_mem(void *virt)
+{
+    uint64_t pageInfo;
+    int file = open("/proc/self/pagemap", 'r');
+     
+    if (lseek(file, (((size_t)virt)/PAGE_SIZE)*8, SEEK_SET) != (size_t)virt>>9)
+        printf("Error: can't find page map for %p\n", virt);
+    read(file, &pageInfo, 8);
+    close(file);
+    return((void*)(size_t)((pageInfo*PAGE_SIZE)));
+}
  
 void unmap_peripheral(struct bcm2711_peripheral *p) {
  
